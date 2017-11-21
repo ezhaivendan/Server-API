@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Client render</title>
+ 
+  <script type="text/javascript">
+	document.addEventListener("DOMContentLoaded", function(event) {
+
+		function createNode(element) {
+			return document.createElement(element);
+		}
+
+		function append(parent, el) {
+			return parent.appendChild(el);
+		}
+
+		const UserSection = document.getElementById('authors');
+
+		const url = '/client-render/api';
+
+		fetch(url)
+		.then((resp) => resp.json())
+		.then(function(data) {
+			data = JSON.parse(data);
+			let Users = data.results;
+			console.log(Users);
+			return Users.map(function(User) {
+
+				let Items = createNode('li'),
+				Image = createNode('img'),
+				Name = createNode('p');
+				const Email = createNode('a');
+				Email.setAttribute('class', 'signature');
+				Email.setAttribute('href', 'mailto:'+ User.email);
+				Image.src = User.picture.medium;
+
+				Name.innerHTML = User.name.first +' '+ User.name.last;
+				Email.innerHTML = User.email;
+				
+				append(Items, Image);
+				append(Items, Name);
+				append(Items, Email);
+				append(UserSection, Items);
+			})
+		})
+
+		.catch(function(error) {
+			console.log(JSON.stringify(error));
+		});   
+	});
+
+  </script>
+
+  <style type="text/css">
+	html, body {
+		margin: 0
+	}
+	.container {
+		width: 1024px;
+		margin: 0 auto;
+		font-size: 13px;
+		font-family: arial;
+		font-weight: normal;
+	}
+	ul {
+	    list-style: none;
+	    padding: 0;
+	    margin: 0;
+	}
+	li {
+	    width: 48%;
+	    float: left;
+	    margin: 1%;
+	    border-bottom: 1px solid #ddd;
+	    padding-bottom: 20px;
+	}
+	img {
+	    float: left;
+	    margin-right: 20px;
+	}
+	p {
+	    text-transform: capitalize;
+	}
+  </style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Authors</h1>
+		<ul id="users">
+		</ul>
+	</div>
+</body>
+</html>
